@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  View, StatusBar, Animated, Dimensions, PanResponder
+  View, StatusBar, Animated, Dimensions, PanResponder, SafeAreaView
 } from 'react-native';
 
 import styles from './index.styles';
@@ -75,7 +75,9 @@ class TopBar extends React.Component {
   runAnimations = () => {
     const { fadeout, fadeoutDuration } = this.props;
 
-    this.fadeIn(() => fadeout && this.fadeOut(fadeoutDuration))
+    this.fadeIn(() => {
+      fadeout && this.fadeOut(fadeoutDuration)
+    })
   }
 
   fadeIn = (next) => {
@@ -85,8 +87,8 @@ class TopBar extends React.Component {
     const { willFadeIn, onFadeIn } = this.props;
     willFadeIn();
     Animated.timing(this.state.fadeAnim, this.toolbarAnimation).start(() => {
-      next && next();
       this.isOpened = true;
+      next && next();
       onFadeIn()
     })
   }
@@ -95,6 +97,7 @@ class TopBar extends React.Component {
     if (!this.isOpened) {
       return;
     }
+
     const { fadeoutAfter, onFadeOut, willFadeOut, toHeight } = this.props;
     const toolbarFadeoutAnimation = {
       toValue: 0,
@@ -134,9 +137,9 @@ class TopBar extends React.Component {
         >
           {renderContent && renderContent()}
           {image &&
-            <View style={{
+            <SafeAreaView style={{
               paddingTop: StatusBar.currentHeight,
-              paddingBottom: 20,
+              marginBottom: 10,
             }}>
               <Animated.Image
                 resizeMode="contain"
@@ -147,7 +150,7 @@ class TopBar extends React.Component {
                   height: fadeAnim,
                 }}
               />
-            </View>
+            </SafeAreaView>
           }
         </Animated.View>
       </View>
