@@ -21,17 +21,12 @@ class TopBar extends React.Component {
     }
 
     this._panResponder = PanResponder.create({
-      // Ask to be the responder:
       onStartShouldSetPanResponder: (evt, gestureState) => true,
       onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
       onMoveShouldSetPanResponder: (evt, gestureState) => true,
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
 
-      onPanResponderGrant: (evt, gestureState) => {
-        // The gesture has started. Show visual feedback so the user knows
-        // what is happening!
-        // gestureState.d{x,y} will be set to zero now
-      },
+      onPanResponderGrant: (evt, gestureState) => { },
       onPanResponderMove: (evt, gestureState) => {
         // The most recent move distance is gestureState.move{X,Y}
         // The accumulated gesture distance since becoming responder is
@@ -84,11 +79,12 @@ class TopBar extends React.Component {
   runAnimations = () => {
     const { fadeout, fadeoutDuration } = this.props;
 
-    Animated.timing(this.state.fadeAnim, this.toolbarAnimation).start(() => {
-      fadeout && this.fadeOut(fadeoutDuration)
-    });
+    this.fadeIn(() => fadeout && this.fadeOut(fadeoutDuration))
   }
 
+  fadeIn = (next) => {
+    Animated.timing(this.state.fadeAnim, this.toolbarAnimation).start(next)
+  }
 
   fadeOut = (duration) => {
     const { fadeoutAfter, native } = this.props;
@@ -113,21 +109,26 @@ class TopBar extends React.Component {
     } = this.props;
     return (
       <View
-        style={[styles.mainContainer, { top: native ? -toHeight : 0, }]}>
+        style={[
+          styles.mainContainer,
+          { top: native ? -toHeight : 0, }
+        ]}>
         <Animated.View
-          style={{
-            ...styles.topLogoContainer,
+          style={[styles.topLogoContainer, {
             width: Dimensions.get('window').width / (toWidth || 1.5),
             height: native ? this.props.toHeight : fadeAnim,
             translateY: native ? fadeAnim : undefined,
             backgroundColor,
             opacity,
-          }}
+          }]}
           {...this._panResponder.panHandlers}
         >
           {renderContent && renderContent()}
           {image &&
-            <View style={{ paddingTop: StatusBar.currentHeight, paddingBottom: 20, }}>
+            <View style={{
+              paddingTop: StatusBar.currentHeight,
+              paddingBottom: 20,
+            }}>
               <Animated.Image
                 resizeMode="contain"
                 source={image}
@@ -145,12 +146,12 @@ class TopBar extends React.Component {
   }
 }
 
-AnimatedToolbar.propTypes = {
+TopBar.propTypes = {
   native: PropTypes.bool,
   enable: PropTypes.bool,
 }
 
-AnimatedToolbar.defaultProps = {
+TopBar.defaultProps = {
   native: true,
   enable: true,
 }

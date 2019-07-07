@@ -114,21 +114,26 @@ class TopBar extends React.Component {
     } = this.props;
     return (
       <View
-        style={[styles.mainContainer, { top: native ? -toHeight : 0, }]}>
+        style={[
+          styles.mainContainer,
+          { top: native ? -toHeight : 0, }
+        ]}>
         <Animated.View
-          style={{
-            ...styles.topLogoContainer,
+          style={[styles.topLogoContainer, {
             width: Dimensions.get('window').width / (toWidth || 1.5),
             height: native ? this.props.toHeight : fadeAnim,
             translateY: native ? fadeAnim : undefined,
             backgroundColor,
             opacity,
-          }}
+          }]}
           {...this._panResponder.panHandlers}
         >
           {renderContent && renderContent()}
           {image &&
-            <View style={{ paddingTop: StatusBar.currentHeight, paddingBottom: 20, }}>
+            <View style={{
+              paddingTop: StatusBar.currentHeight,
+              paddingBottom: 20,
+            }}>
               <Animated.Image
                 resizeMode="contain"
                 source={image}
@@ -146,12 +151,12 @@ class TopBar extends React.Component {
   }
 }
 
-AnimatedToolbar.propTypes = {
+TopBar.propTypes = {
   native: PropTypes.bool,
   enable: PropTypes.bool,
 }
 
-AnimatedToolbar.defaultProps = {
+TopBar.defaultProps = {
   native: true,
   enable: true,
 }
