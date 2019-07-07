@@ -7,13 +7,17 @@ class App extends React.Component {
     return (
       <View style={styles.container}>
         <TopBar
-          image={require('./assets/icon.png')}
           swipable
-          swipeDuration={2000}
+          swipeDuration={300}
           toHeight={300}
           backgroundColor="red"
           native={false}
           ref={ref => this.rrr = ref}
+          onFadeOut={() => console.log('ON OUT')}
+          onFadeIn={() => console.log('ON IN')}
+          willFadeIn={() => console.log('WILL IN')}
+          willFadeOut={() => console.log('WILL OUT')}
+          renderContent={() => <View style={{ backgroundColor: 'blue', height: 80, width: 30 }} />}
         />
         <Text>dddd</Text>
         <View>

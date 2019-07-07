@@ -10,7 +10,7 @@ class TopBar extends React.Component {
     super(props);
 
     this.state = {
-      fadeAnim: new Animated.Value(-props.toHeight),
+      fadeAnim: new Animated.Value(0),
     };
 
     this.toolbarAnimation = {
@@ -40,12 +40,19 @@ class TopBar extends React.Component {
       },
       onPanResponderRelease: (evt, gestureState) => {
         const { swipeDuration } = this.props;
-        const { toHeight } = this.props;
+        const { toHeight, onFadeIn, onFadeOut, willFadeOut, willFadeIn } = this.props;
         const toValue = gestureState.moveY < toHeight / 2 ? 0 : toHeight;
+        const closing = toValue === 0;
+
+        closing ? willFadeOut() : willFadeIn()
+
         Animated.timing(this.state.fadeAnim, {
           toValue,
           duration: swipeDuration,
-        }).start()
+        }).start(() => {
+          this.isOpened = !closing;
+          closing ? onFadeOut() : onFadeIn()
+        })
       },
     });
   }
@@ -72,16 +79,33 @@ class TopBar extends React.Component {
   }
 
   fadeIn = (next) => {
-    Animated.timing(this.state.fadeAnim, this.toolbarAnimation).start(next)
+    if (this.isOpened) {
+      return;
+    }
+    const { willFadeIn, onFadeIn } = this.props;
+    willFadeIn();
+    Animated.timing(this.state.fadeAnim, this.toolbarAnimation).start(() => {
+      next && next();
+      this.isOpened = true;
+      onFadeIn()
+    })
   }
 
   fadeOut = (duration) => {
-    const { fadeoutAfter } = this.props;
+    if (!this.isOpened) {
+      return;
+    }
+    const { fadeoutAfter, onFadeOut, willFadeOut, toHeight } = this.props;
     const toolbarFadeoutAnimation = {
       toValue: 0,
       duration,
     }
-    setTimeout(() => Animated.timing(this.state.fadeAnim, toolbarFadeoutAnimation).start(this.props.onFadeOut), fadeoutAfter)
+
+    willFadeOut();
+    setTimeout(() => Animated.timing(this.state.fadeAnim, toolbarFadeoutAnimation).start(() => {
+      onFadeOut()
+      this.isOpened = false;
+    }), fadeoutAfter)
   }
 
   render() {
@@ -92,7 +116,6 @@ class TopBar extends React.Component {
       backgroundColor,
       opacity,
       toWidth,
-      toHeight
     } = this.props;
     return (
       <View
@@ -106,6 +129,7 @@ class TopBar extends React.Component {
             height: fadeAnim,
             backgroundColor,
             opacity,
+            flexDirection: 'column'
           }]}
           {...this.props.swipable && this._panResponder.panHandlers}
         >
@@ -135,6 +159,10 @@ class TopBar extends React.Component {
 TopBar.defaultProps = {
   enable: true,
   swipeDuration: 300,
+  willFadeOut: () => { },
+  willFadeIn: () => { },
+  onFadeIn: () => { },
+  onFadeOut: () => { },
 }
 
 export default TopBar;
