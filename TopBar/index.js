@@ -129,7 +129,6 @@ class TopBar extends React.Component {
             height: fadeAnim,
             backgroundColor,
             opacity,
-            flexDirection: 'column'
           }]}
           {...this.props.swipable && this._panResponder.panHandlers}
         >
