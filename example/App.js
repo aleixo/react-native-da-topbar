@@ -8,7 +8,9 @@ class App extends React.Component {
       <View style={styles.container}>
         <TopBar
           image={require('./assets/icon.png')}
-          toHeight={800}
+          swipable
+          swipeDuration={2000}
+          toHeight={300}
           backgroundColor="red"
           native={false}
           ref={ref => this.rrr = ref}
